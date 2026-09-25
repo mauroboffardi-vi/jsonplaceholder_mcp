@@ -1,0 +1,30 @@
+# Dipendenze Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# File di compilazione TypeScript
+dist/
+build/
+*.tsbuildinfo
+
+# File di sistema operativo (macOS e Windows)
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# File di configurazione locale e variabili d'ambiente (PAT, token, credenziali)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Log di esecuzione
+logs
+*.log

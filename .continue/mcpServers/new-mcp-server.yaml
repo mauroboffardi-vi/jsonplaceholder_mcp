@@ -1,0 +1,11 @@
+name: JSONPlaceholder MCP
+version: 0.0.1
+schema: v1
+mcpServers:
+  - name: New MCP server
+    command: npx
+    args:
+      - -y
+      - mcp-remote
+      - http://127.0.0.1:3000/sse
+    env: {}
