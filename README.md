@@ -233,6 +233,172 @@ Use these prompts to test how different LLM setups (Local Qwen vs. Cloud Claude)
 8. **Complex Multi-Condition Search:**
    > *"Find all users who have at least one uncompleted todo item and have published more than 2 albums. For these users, list their top 3 posts along with the number of comments each post received."*
 
+# example of ollmcp Terminal Output
+
+```text
+❯ ./start_chat.sh
+      ___    ___
+     /\_ \  /\_ \
+   ___\//\ \ \//\ \     ___ ___     ___    _____
+  / __`\\ \ \  \ \ \  /' __` __`\  /'___\/\ '__`\
+ /\ \L\ \\_\ \_ \_\ \_/\ \/\ \/\ \/\ \__/\ \ \L\ \
+ \ \____//\____\/\____\ \_\ \_\ \_\ \____\\ \ ,__/
+  \/___/ \/____/\/____/\/_/\/_/\/_/\/____/ \ \ \/
+                                            \ \_\
+                                             \/_/
+```
+
+Using 1 MCP server(s) from `ollmcp` registry (local/project/user scopes)  
+Found configured server: **JSONP**  
+Connecting to server: **JSONP**  
+* Server JSONP does not support prompts capability
+* Server JSONP does not support resources capability
+
+Successfully connected to **JSONP** with 6 tool(s).
+
+---
+
+### Welcome to the MCP Client for Ollama 🦙
+
+#### 🔧 Available Tools (6/6 tools enabled)
+* `JSONP.get_users`
+* `JSONP.get_todos`
+* `JSONP.get_albums`
+* `JSONP.get_photos`
+* `JSONP.get_posts`
+* `JSONP.get_comments`
+
+#### Environment Status
+* **Current model:** `qwen3:14b` (ollama)
+* **Capabilities:** 🔧 Tools | 💭 Thinking (medium)
+
+---
+
+### 💡 Startup Help
+
+#### Getting Started:
+* Type `/model` or `/m` to select a model
+* Type `/tools` or `/t` to configure tools
+* Type `/server:prompt_name` to invoke an MCP server prompt
+* *(New!)* Type `@resource_uri` to read a resource or `@` for autocomplete suggestions
+* Type `/input-mode` or `/im` to switch single-line or multiline chat input
+* Type `/clear`, `/new` or `/cc` to clear conversation context
+* Type `/help` or `/h` to see the full command list
+* Type `/quit` or `/q` to exit the client
+
+---
+
+## Session
+
+**User (`qwen3/show-thinking/6-tools`):**  
+> Show me all data and details for the user with username 'Samantha'.
+
+---
+
+### 🤔 Thinking
+
+> Okay, the user is asking for all data and details for the user with the username 'Samantha'. Let me check the available tools. There's the `JSONP_get_users` function which allows filtering by username. The parameters include username, email, and id. Since the user provided the username 'Samantha', I should use that. The function description says that if the username is provided, it filters users by that username. So I need to call `JSONP_get_users` with the username set to 'Samantha'. I don't need to include email or id here because the user didn't mention them. That should retrieve the user data if a match exists. I'll structure the tool call accordingly.
+
+---
+
+### 🔧 Executing Tool: `JSONP.get_users`
+
+```json
+{
+  "username": "Samantha"
+}
+```
+
+#### 🧑‍💻 Human-in-the-Loop Confirmation
+* **Tool to execute:** `JSONP.get_users`
+* **Arguments:**
+  * `username`: Samantha
+
+**Options:**
+* `y/yes` - Execute the tool call
+* `n/no` - Skip this tool call
+* `s/session` - Execute without asking for this session
+* `d/disable` - Disable HIL confirmations permanently
+* `a/abort` - Abort this query (won't save to history)
+
+*Selection:* `y`
+
+---
+
+### ✅ Tool Response: `JSONP.get_users`
+
+```json
+[
+  {
+    "id": 3,
+    "name": "Clementine Bauch",
+    "username": "Samantha",
+    "email": "Nathan@yesenia.net",
+    "address": {
+      "street": "Douglas Extension",
+      "suite": "Suite 847",
+      "city": "McKenziehaven",
+      "zipcode": "59590-4157",
+      "geo": {
+        "lat": "-68.6102",
+        "lng": "-47.0653"
+      }
+    },
+    "phone": "1-463-123-4447",
+    "website": "ramiro.info",
+    "company": {
+      "name": "Romaguera-Jacobson",
+      "catchPhrase": "Face to face bifurcated interface",
+      "bs": "e-enable strategic applications"
+    }
+  }
+]
+```
+
+---
+
+### 🤔 Thinking
+
+> Okay, the user asked for all data and details for the user with username 'Samantha'. I called the `JSONP_get_users` function with the username parameter set to 'Samantha'. The response came back with one user matching that username. Now I need to present this information in a clear and detailed way.
+> 
+> First, I'll check the response data. The user has an ID of 3, name Clementine Bauch, email Nathan@yesenia.net, and other details like address, phone, website, and company information. The address includes street, suite, city, zipcode, and geo coordinates. The company has a name, catchPhrase, and bs (business slogan).
+> 
+> I should structure the answer to include all these details. Maybe start with the basic info: name, username, email. Then break down the address, phone, website, and company into separate sections for clarity. Make sure to mention each part of the address and the company details. Also, note that the geo coordinates are provided as lat and lng.
+> 
+> I should avoid any technical jargon and present the information in a straightforward manner. Since the user asked for all data, I need to ensure nothing is omitted. Let me double-check the response to confirm all fields are included. Yep, looks like everything is there. Now, format it in a way that's easy to read, perhaps using bullet points or sections. Alright, time to put it all together.
+
+---
+
+### 📝 Answer
+
+Here is the detailed data for the user with the username 'Samantha':
+
+#### User Information
+* **ID:** 3
+* **Name:** Clementine Bauch
+* **Username:** Samantha
+* **Email:** Nathan@yesenia.net
+
+#### Address
+* **Street:** Douglas Extension
+* **Suite:** Suite 847
+* **City:** McKenziehaven
+* **Zipcode:** 59590-4157
+* **Geo Coordinates:**
+  * **Latitude:** -68.6102
+  * **Longitude:** -47.0653
+
+#### Contact & Links
+* **Phone:** 1-463-123-4447
+* **Website:** ramiro.info
+
+#### Company
+* **Name:** Romaguera-Jacobson
+* **Catch Phrase:** Face to face bifurcated interface
+* **Business Slogan (bs):** e-enable strategic applications
+
+Let me know if you need further details!
+
 ## 📜 License
 
 This project is licensed under the ISC / MIT License.
