@@ -32,10 +32,11 @@ server.registerTool(
         description: "Retrieve a single user by ID, or retrieve all users if no ID is provided. ",
         inputSchema: {
             id: z.coerce.number().optional().describe("Numeric ID of the user to look for (es. 1, 2, 3). if omitted, all users are returned"),
-            username: z.string().optional().describe("Filter todos belonging to a specific username (e.g. 'Bret'). if omitted, no filter is applied")
+            username: z.string().optional().describe("Filter users belonging to a specific username (e.g. 'Bret'). if omitted, no filter is applied"),
+            email: z.coerce.string().optional().describe("Filter users by a specific email  (e.g. Sincere@april.biz). if omitted, no filter is applied")
         }
     },
-    async ({ id, username }) => {
+    async ({ id, username, email }) => {
         console.log(`\n==================================================`);
         console.log(`[TOOL CALL] ---> RUN 'get_user' FOR ID: ${id}`);
         console.log(`[TOOL CALL] ---> https://jsonplaceholder.typicode.com/users/${id}`);
@@ -50,6 +51,11 @@ server.registerTool(
             if (username !== undefined) {
                 // If no ID, but userId is provided, append query parameters
                 url = `https://jsonplaceholder.typicode.com/users?username=${username}`;
+            }
+
+            if (email !== undefined) {
+                // If no ID, but userId is provided, append query parameters
+                url = `https://jsonplaceholder.typicode.com/users?email=${email}`;
             }
 
             const response = await fetch(url);
@@ -377,10 +383,11 @@ server.registerTool(
         description: "Retrieve the data of all comments from the JSONPlaceholder project. if an id is provided, gets only that specific comment. comments have an id, a postId that specifies the posts they belongs to, the body with the actual text of the comment, and name and email of the person that left the comment",
         inputSchema: {
             id: z.coerce.number().optional().describe("Numeric ID of the comment to look for (es. 1, 2, 3). if omitted, return all comments"),
-            postId: z.coerce.number().optional().describe("Filter posts belonging to a specific post (e.g. 1). if omitted, no filter is applied")
+            postId: z.coerce.number().optional().describe("Filter comments belonging to a specific post (e.g. 1). if omitted, no filter is applied"),
+            email: z.coerce.string().optional().describe("Filter comments submitted by a specific email  (e.g. Sincere@april.biz). if omitted, no filter is applied")
         }
     },
-    async ({ id, postId }) => {
+    async ({ id, postId, email }) => {
         console.log(`\n==================================================`);
         console.log(`[TOOL CALL] ---> RUN 'get_posts' FOR ID: ${id} (Type: ${typeof id})`);
         console.log(`==================================================\n`);
@@ -397,6 +404,10 @@ server.registerTool(
             if (postId !== undefined) {
                 // If no ID, but userId is provided, append query parameters
                 url = `https://jsonplaceholder.typicode.com/comments?postId=${postId}`;
+            }
+            if (email !== undefined) {
+                // If no ID, but userId is provided, append query parameters
+                url = `https://jsonplaceholder.typicode.com/comments?email=${email}`;
             }
             console.log(`[TOOL CALL] ${url}`);
 
