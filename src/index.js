@@ -17,20 +17,96 @@ const server = new McpServer({
     name: "azure-devops-mcp-mock",
     version: "1.0.0"
 });
-// Registering the Tool
-// Registering the Tool using the updated SDK method (registerTool)
-server.registerTool("get_todo", {
-    description: "Retrieve the data of a todo from the JSONPlaceholder project. Reply to the user using ONLY  title and status retrieved from the tool, without adding inferred dettails.",
+/**
+ *         TOOL : GET a USER or a list of USERS
+ */
+server.registerTool("get_user", {
+    description: "Retrieve a single user by ID, or retrieve all users if no ID is provided. Reply by providing ONLY data available in the response, without adding inferred dettails.",
     inputSchema: {
-        id: z.coerce.number().describe("Numeric ID of the todo to look for (es. 1, 2, 3)")
+        id: z.coerce.number().optional().describe("Numeric ID of the user to look for (es. 1, 2, 3). if omitted, all users are returned")
     }
 }, async ({ id }) => {
+    console.log(`\n==================================================`);
+    console.log(`[TOOL CALL] ---> RUN 'get_user' FOR ID: ${id}`);
+    console.log(`[TOOL CALL] ---> https://jsonplaceholder.typicode.com/users/${id}`);
+    console.log(`==================================================\n`);
+    try {
+        console.log(`[TOOL CALL] HTTP Call to JsonPlaceholder...`);
+        var url = `https://jsonplaceholder.typicode.com/users/${id}`;
+        if (id == 0) {
+            url = `https://jsonplaceholder.typicode.com/users`;
+        }
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Invalid HTTP response status: ${response.status}`);
+        }
+        const data = (await response.json());
+        console.log(`[TOOL CALL] Data successfully received:`, data);
+        let resultText = "";
+        if (Array.isArray(data)) {
+            // Response from /todos or /todos?userId=X
+            if (data.length === 0) {
+                resultText = "No todos found matching the criteria.";
+            }
+            else {
+                const formattedList = data
+                    .map((todo) => `- Todo #${todo.id} | Title: ${todo.title} | UserId: ${todo.userId} | Status: ${todo.completed ? 'COMPLETED' : 'OPEN'}`)
+                    .join("\n");
+                resultText = `TODOS FOUND (${data.length}):\n${formattedList}`;
+            }
+        }
+        else {
+            // Single object response from /todos/:id
+            resultText = `TODO FOUND:\n- Title: ${data.title}\n- Status: ${data.completed ? 'COMPLETED' : 'OPEN'}`;
+        }
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: resultText
+                }
+            ]
+        };
+    }
+    catch (error) {
+        console.error(`[TOOL ERROR] tool execution error:`, error?.message || error);
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: `it was not possible to find the user with id = ${id}. Error: ${error?.message || 'unknown'}`
+                }
+            ],
+            isError: true
+        };
+    }
+});
+/**
+ *         TOOL : GET a single TODO
+ */
+server.registerTool("get_todo", {
+    description: "Retrieve the data of all todos from the JSONPlaceholder project. if an id is provided, gets only that specific todo. Reply to the user using ONLY  title and status retrieved from the tool, without adding inferred dettails.",
+    inputSchema: {
+        id: z.coerce.number().optional().describe("Numeric ID of the todo to look for (es. 1, 2, 3). if omitted, return all todos"),
+        userId: z.coerce.number().optional().describe("Filter todos belonging to a specific user ID (e.g. 1). if omitted, no filter is applied")
+    }
+}, async ({ id, userId }) => {
     console.log(`\n==================================================`);
     console.log(`[TOOL CALL] ---> RUN 'get_todo' FOR ID: ${id} (Type: ${typeof id})`);
     console.log(`==================================================\n`);
     try {
-        console.log(`[TOOL CALL] HTTP Call to JsonPlaceholder...`);
-        const response = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`);
+        console.log(`[TOOL CALL] get_todo HTTP Call to JsonPlaceholder...`);
+        let url = "https://jsonplaceholder.typicode.com/todos";
+        if (id !== 0) {
+            // If ID is provided, target the specific item endpoint
+            url = `https://jsonplaceholder.typicode.com/todos/${id}`;
+        }
+        else if (userId !== 0) {
+            // If no ID, but userId is provided, append query parameters
+            url = `https://jsonplaceholder.typicode.com/todos?userId=${userId}`;
+        }
+        console.log(`[TOOL CALL] ${url}`);
+        const response = await fetch(url);
         if (!response.ok) {
             throw new Error(`Invalid HTTP response status: ${response.status}`);
         }
